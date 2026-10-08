@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Digital de Educação Jurídica</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #38bdf8;
+            --accent-hover: #0284c7;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; min-height: 100vh; }
+
+        header { background-color: #0284c7; padding: 1.5rem; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        header h1 { font-size: 1.8rem; }
+        header p { font-size: 0.95rem; opacity: 0.9; }
+
+        nav { background: #1e293b; display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 10px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #334155; }
+        nav button { background: transparent; border: none; color: var(--text-color); padding: 8px 16px; font-weight: 600; cursor: pointer; border-radius: 6px; transition: 0.3s; }
+        nav button:hover, nav button.active { background: var(--accent); color: #0f172a; }
+
+        main { max-width: 1000px; margin: 20px auto; padding: 0 20px; flex: 1; width: 100%; }
+        .section { display: none; }
+        .section.active { display: block; animation: fadeIn 0.4s ease-in-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); padding: 20px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #334155; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
+
+        /* Quiz & Jogos */
+        .btn-option { display: block; width: 100%; text-align: left; background: #334155; color: white; border: none; padding: 12px; margin: 8px 0; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-option:hover:not(:disabled) { background: #475569; }
+        .btn-option:disabled { opacity: 0.6; cursor: not-allowed; }
+        .feedback { margin-top: 15px; padding: 12px; border-radius: 6px; display: none; }
+        
+        .quiz-controls, .game-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; gap: 10px; }
+        .btn-action { background: var(--accent); color: #0f172a; border: none; padding: 10px 18px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-action:hover { background: var(--accent-hover); color: white; }
+        .btn-reset { background: #475569; color: white; }
+        .btn-reset:hover { background: #64748b; }
+
+        /* Semáforo */
+        .semaforo-btns { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-green { background: var(--success); color: white; }
+        .btn-yellow { background: var(--warning); color: black; }
+        .btn-red { background: var(--danger); color: white; }
+        .semaforo-btns button { flex: 1; padding: 12px; border: none; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .semaforo-btns button:hover:not(:disabled) { opacity: 0.9; }
+
+        /* Glossário & Chatbot */
+        input[type="text"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; margin-bottom: 15px; }
+        .chat-box { height: 250px; background: #0f172a; border-radius: 6px; padding: 10px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+        .msg { padding: 8px 12px; border-radius: 6px; max-width: 80%; }
+        .msg.user { background: var(--accent); color: #0f172a; align-self: flex-end; }
+        .msg.bot { background: #334155; color: white; align-self: flex-start; }
+
+        footer { text-align: center; padding: 15px; background: #1e293b; margin-top: 30px; font-size: 0.85rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>⚖️ Plataforma Interativa de Educação Jurídica</h1>
+        <p>Projeto de Extensão: Tecnologia e Ciência da Computação aplicadas ao Ensino do Direito</p>
+    </header>
+
+    <nav>
+        <button class="active" onclick="switchTab('conteudo', event)">📚 Conteúdo</button>
+        <button onclick="switchTab('quiz', event)">📝 Quiz (10 Qs)</button>
+        <button onclick="switchTab('poderes', event)">🏛️ Três Poderes</button>
+        <button onclick="switchTab('semaforo', event)">🚦 Semáforo Jurídico</button>
+        <button onclick="switchTab('glossario', event)">📖 Glossário</button>
+        <button onclick="switchTab('chatbot', event)">💬 Chatbot</button>
+    </nav>
+
+    <main>
+        <!-- CONTEÚDO JURÍDICO -->
+        <section id="conteudo" class="section active">
+            <h2>📚 Módulos Teóricos</h2>
+            <br>
+            <div class="grid">
+                <div class="card">
+                    <h3>🏛️ Direito Constitucional</h3>
+                    <p>Trata das regras fundamentais do Estado, direitos fundamentais, cidadania e a organização dos três Poderes (Executivo, Legislativo e Judiciário).</p>
+                </div>
+                <div class="card">
+                    <h3>💼 Direito do Trabalho</h3>
+                    <p>Regula a relação entre empregados e empregadores. Abrange regras de jornada, férias, rescisão, FGTS e carteira assinada.</p>
+                </div>
+                <div class="card">
+                    <h3>🛒 Direito do Consumidor</h3>
+                    <p>Protege o comprador em trocas comerciais. Trata de prazos de garantia, devolução, produtos com defeito e práticas abusivas.</p>
+                </div>
+                <div class="card">
+                    <h3>🔒 Direito & Tecnologia (LGPD)</h3>
+                    <p>Define diretrizes sobre privacidade na internet, tratamento de dados pessoais, crimes cibernéticos e segurança da informação.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ JURÍDICO -->
+        <section id="quiz" class="section">
+            <h2>📝 Quiz Interativo (10 Questões)</h2>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; color: var(--accent);">
+                    <span id="quiz-progress">Pergunta 1 de 10</span>
+                    <span id="quiz-score">Pontuação: 0</span>
+                </div>
+                <h3 id="quiz-question">Pergunta aqui</h3>
+                <div id="quiz-options"></div>
+                <div id="quiz-feedback" class="feedback"></div>
+                
+                <div class="quiz-controls">
+                    <button class="btn-action btn-reset" onclick="resetQuiz()">🔄 Refazer Quiz</button>
+                    <button class="btn-action" id="btn-next-quiz" onclick="nextQuiz()" style="display: none;">Próxima Pergunta ➡️</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOGO TRÊS PODERES -->
+        <section id="poderes" class="section">
+            <h2>🏛️ Simulador dos Três Poderes</h2>
+            <p>Classifique quem é responsável pela atribuição abaixo:</p>
+            <br>
+            <div class="card">
+                <h3 id="poderes-scenario">Cenário...</h3>
+                <button class="btn-option btn-poder" onclick="checkPoder('Executivo')">👑 Executivo (Administrar / Aplicar Leis)</button>
+                <button class="btn-option btn-poder" onclick="checkPoder('Legislativo')">📜 Legislativo (Criar e Votar Leis)</button>
+                <button class="btn-option btn-poder" onclick="checkPoder('Judiciario')">⚖️ Judiciário (Julgar Conflitos)</button>
+                <div id="poderes-feedback" class="feedback"></div>
+                
+                <div class="game-controls">
+                    <button class="btn-action btn-reset" onclick="resetPoderes()">🔄 Reiniciar</button>
+                    <button class="btn-action" id="btn-next-poder" onclick="nextPoder()" style="display: none;">Próximo Cenário ➡️</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEMÁFORO JURÍDICO -->
+        <section id="semaforo" class="section">
+            <h2>🚦 Semáforo Jurídico</h2>
+            <p>Classifique a conduta apresentada em Regular, Atenção ou Violação de Direito:</p>
+            <br>
+            <div class="card">
+                <div style="margin-bottom: 10px; font-weight: bold; color: var(--accent);" id="semaforo-progress">Situação 1 de 6</div>
+                <h3 id="semaforo-case">Situação...</h3>
+                <div class="semaforo-btns">
+                    <button class="btn-green btn-sem" onclick="checkSemaforo('regular')">🟢 Regular</button>
+                    <button class="btn-yellow btn-sem" onclick="checkSemaforo('atencao')">🟡 Atenção</button>
+                    <button class="btn-red btn-sem" onclick="checkSemaforo('violacao')">🔴 Violação</button>
+                </div>
+                <div id="semaforo-feedback" class="feedback"></div>
+
+                <div class="game-controls">
+                    <button class="btn-action btn-reset" onclick="resetSemaforo()">🔄 Reiniciar Jogo</button>
+                    <button class="btn-action" id="btn-next-semaforo" onclick="nextSemaforo()" style="display: none;">Próxima Situação ➡️</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- GLOSSÁRIO JURÍDICO -->
+        <section id="glossario" class="section">
+            <h2>📖 Glossário Jurídico</h2>
+            <input type="text" id="searchGlossario" onkeyup="filterGlossario()" placeholder="Pesquisar termo (ex: Cidadania, LGPD, Empregado)...">
+            <div id="glossario-list" class="grid"></div>
+        </section>
+
+        <!-- CHATBOT -->
+        <section id="chatbot" class="section">
+            <h2>💬 Chatbot Educativo Jurídico</h2>
+            <div class="card">
+                <div class="chat-box" id="chatBox">
+                    <div class="msg bot">Olá! Sou o Assistente Jurídico Educacional. Pode me perguntar sobre "Capacidade jurídica", "LGPD", "CDC" ou "Trabalho".</div>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="chatInput" placeholder="Digite sua pergunta..." style="margin:0;" onkeypress="if(event.key==='Enter') sendChat()">
+                    <button onclick="sendChat()" style="background:var(--accent); border:none; padding:10px 20px; font-weight:bold; border-radius:6px; cursor:pointer;">Enviar</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido para o Projeto de Extensão da Faculdade Municipal Professor Franco Montoro - Direito e Cidadania | 2026</p>
+    </footer>
+
+    <script>
+        // Navegação por abas
+        function switchTab(tabId, evt) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            if(evt) evt.target.classList.add('active');
+        }
+
+        // --- QUIZ DATA & LOGIC (10 QUESTÕES) ---
+        const quizData = [
+            {
+                q: "1. Qual o prazo padrão para desistir de uma compra feita PELA INTERNET (Direito de Arrependimento)?",
+                options: ["24 horas", "7 dias", "30 dias", "Não é possível desistir"],
+                correct: 1,
+                exp: "O Art. 49 do CDC garante 7 dias para desistência de compras fora do estabelecimento comercial físico."
+            },
+            {
+                q: "2. Quem tem como função primária a elaboração e aprovação das leis no Brasil?",
+                options: ["Poder Judiciário", "Poder Executivo", "Poder Legislativo", "Ministério Público"],
+                correct: 2,
+                exp: "O Poder Legislativo (Senado e Câmara dos Deputados) detém a competência de criar e votar leis."
+            },
+            {
+                q: "3. Qual a jornada de trabalho semanal máxima permitida pela Constituição Federal sem horas extras?",
+                options: ["36 horas", "40 horas", "44 horas", "48 horas"],
+                correct: 2,
+                exp: "O Art. 7º da Constituição limita a jornada normal a 8 horas diárias e 44 horas semanais."
+            },
+            {
+                q: "4. Segundo a LGPD, o que são 'dados pessoais sensíveis'?",
+                options: ["Endereço de e-mail e telefone comercial", "Origem racial, convicção religiosa e dados de saúde", "Nome completo e CPF", "Histórico de compras online"],
+                correct: 1,
+                exp: "Dados sensíveis envolvem aspectos íntimos do indivíduo (raça, religião, saúde, biometria) que exigem maior proteção."
+            },
+            {
+                q: "5. Em caso de defeito aparente num produto DURÁVEL (ex: geladeira), qual o prazo para reclamar pelo CDC?",
+                options: ["7 dias", "15 dias", "30 dias", "90 dias"],
+                correct: 3,
+                exp: "O CDC define 30 dias para produtos não duráveis e 90 dias para produtos duráveis."
+            },
+            {
+                q: "6. Qual destes NÃO é um elemento essencial caracterizador da relação de emprego (CLT)?",
+                options: ["Habitualidade (continuidade)", "Onerosidade (salário)", "Voluntariado gratuito", "Subordinação hierárquica"],
+                correct: 2,
+                exp: "A relação de emprego exige habituação, pessoa física, pessoalidade, onerosidade e subordinação."
+            },
+            {
+                q: "7. Qual o princípio constitucional que garante que ninguém será obrigado a fazer ou deixar de fazer algo senão em virtude de lei?",
+                options: ["Princípio da Legalidade", "Princípio da Publicidade", "Princípio da Eficiência", "Princípio da Moralidade"],
+                correct: 0,
+                exp: "O Princípio da Legalidade (Art. 5º, II da CF) é o pilar da liberdade e garantia dos direitos individuais."
+            },
+            {
+                q: "8. Uma MEI (Microempreendedor Individual) é uma forma de organização pertencente a qual ramo jurídico?",
+                options: ["Direito do Consumidor", "Direito Empresarial", "Direito Penal", "Direito Internacional"],
+                correct: 1,
+                exp: "O Direito Empresarial disciplina a atividade dos empresários e das sociedades empresárias."
+            },
+            {
+                q: "9. O que ocorre se uma empresa veicular 'Publicidade Enganosa' segundo o CDC?",
+                options: ["É uma prática permitida se houver desconto", "É considerada infração com sanções administrativas e penais", "Apenas obriga a empresa a pedir desculpas públicas", "Não há qualquer penalidade"],
+                correct: 1,
+                exp: "A publicidade enganosa é proibida pelo CDC (Art. 37) e configura crime de consumo."
+            },
+            {
+                q: "10. Qual poder do Estado é responsável pela aplicação direta das leis na administração pública e na prestação de serviços?",
+                options: ["Poder Legislativo", "Poder Judiciário", "Poder Executivo", "Tribunal de Contas"],
+                correct: 2,
+                exp: "O Poder Executivo executa e administra as políticas públicas, aplicando a legislação no dia a dia do Estado."
+            }
+        ];
+
+        let currentQuiz = 0;
+        let quizScore = 0;
+
+        function loadQuiz() {
+            const q = quizData[currentQuiz];
+            document.getElementById('quiz-progress').innerText = `Pergunta ${currentQuiz + 1} de ${quizData.length}`;
+            document.getElementById('quiz-score').innerText = `Pontuação: ${quizScore}`;
+            document.getElementById('quiz-question').innerText = q.q;
+            
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                opts.innerHTML += `<button class="btn-option quiz-opt" onclick="answerQuiz(${idx})">${opt}</button>`;
+            });
+
+            document.getElementById('quiz-feedback').style.display = 'none';
+            document.getElementById('btn-next-quiz').style.display = 'none';
+        }
+
+        function answerQuiz(selected) {
+            const q = quizData[currentQuiz];
+            const fb = document.getElementById('quiz-feedback');
+            document.querySelectorAll('.quiz-opt').forEach(btn => btn.disabled = true);
+
+            fb.style.display = 'block';
+            if(selected === q.correct) {
+                fb.style.background = '#15803d';
+                fb.innerText = "✨ Correto! " + q.exp;
+                quizScore += 10;
+            } else {
+                fb.style.background = '#b91c1c';
+                fb.innerText = "❌ Incorreto. " + q.exp;
+            }
+            document.getElementById('quiz-score').innerText = `Pontuação: ${quizScore}`;
+
+            if(currentQuiz < quizData.length - 1) {
+                document.getElementById('btn-next-quiz').style.display = 'block';
+            } else {
+                setTimeout(() => {
+                    fb.innerHTML += `<br><br>🏆 <strong>Quiz Finalizado!</strong> Sua pontuação final foi: <strong>${quizScore} / ${quizData.length * 10} pontos</strong>.`;
+                }, 200);
+            }
+        }
+
+        function nextQuiz() {
+            if(currentQuiz < quizData.length - 1) {
+                currentQuiz++;
+                loadQuiz();
+            }
+        }
+
+        function resetQuiz() {
+            currentQuiz = 0;
+            quizScore = 0;
+            loadQuiz();
+        }
+        loadQuiz();
+
+        // --- SIMULADOR TRÊS PODERES ---
+        const poderesData = [
+            { case: "Sancionar ou vetar um projeto de lei aprovado pelo Congresso.", answer: "Executivo" },
+            { case: "Julgar uma ação sobre a constitucionalidade de uma lei.", answer: "Judiciario" },
+            { case: "Criar e aprovar uma nova lei federal sobre segurança cibernética.", answer: "Legislativo" }
+        ];
+        let currentPoder = 0;
+
+        function loadPoder() {
+            document.getElementById('poderes-scenario').innerText = poderesData[currentPoder].case;
+            document.getElementById('poderes-feedback').style.display = 'none';
+            document.getElementById('btn-next-poder').style.display = 'none';
+            document.querySelectorAll('.btn-poder').forEach(btn => btn.disabled = false);
+        }
+
+        function checkPoder(choice) {
+            const fb = document.getElementById('poderes-feedback');
+            document.querySelectorAll('.btn-poder').forEach(btn => btn.disabled = true);
+            fb.style.display = 'block';
+
+            if(choice === poderesData[currentPoder].answer) {
+                fb.style.background = '#15803d';
+                fb.innerText = "Resposta correta! Ótima análise.";
+            } else {
+                fb.style.background = '#b91c1c';
+                fb.innerText = `Incorreto. A resposta certa é: ${poderesData[currentPoder].answer}.`;
+            }
+
+            if(currentPoder < poderesData.length - 1) {
+                document.getElementById('btn-next-poder').style.display = 'block';
+            }
+        }
+
+        function nextPoder() {
+            if(currentPoder < poderesData.length - 1) {
+                currentPoder++;
+                loadPoder();
+            }
+        }
+
+        function resetPoderes() {
+            currentPoder = 0;
+            loadPoder();
+        }
+        loadPoder();
+
+        // --- SEMÁFORO JURÍDICO (6 SITUAÇÕES) ---
+        const semaforoData = [
+            { case: "Situação 1: Empresa exige 12 horas diárias de trabalho sem pagamento de horas extras ou descanso semanal.", answer: "violacao", exp: "A CLT proíbe jornadas excessivas sem a devida compensação ou pagamento suplementar." },
+            { case: "Situação 2: Consumidor compra uma roupa online e pede a devolução em 3 dias após receber o pacote.", answer: "regular", exp: "O Art. 49 do CDC concede o prazo legal de 7 dias para desistência de compras online." },
+            { case: "Situação 3: Um site de vendas coleta CPF e telefone do cliente, mas não informa a finalidade no termo de privacidade.", answer: "atencao", exp: "A LGPD exige transparência e finalidade clara na coleta de dados pessoais." },
+            { case: "Situação 4: Funcionário recebe aviso prévio de demissão e cumpre o período conforme a legislação.", answer: "regular", exp: "O aviso prévio é um direito rescisório previsto na CLT e regulamentado pela lei." },
+            { case: "Situação 5: Loja física se recusa a trocar um produto sem defeito após 5 dias da compra.", answer: "regular", exp: "Para lojas físicas, a troca de produtos SEM defeito é cortesia do estabelecimento, não obrigação legal." },
+            { case: "Situação 6: Publicação na internet contendo dados pessoais e bancários de terceiros sem autorização prévia.", answer: "violacao", exp: "Trata-se de violação grave à LGPD e ao direito à privacidade garantido pela Constituição." }
+        ];
+        let currentSemaforo = 0;
+
+        function loadSemaforo() {
+            document.getElementById('semaforo-progress').innerText = `Situação ${currentSemaforo + 1} de ${semaforoData.length}`;
+            document.getElementById('semaforo-case').innerText = semaforoData[currentSemaforo].case;
+            document.getElementById('semaforo-feedback').style.display = 'none';
+            document.getElementById('btn-next-semaforo').style.display = 'none';
+            document.querySelectorAll('.btn-sem').forEach(btn => btn.disabled = false);
+        }
+
+        function checkSemaforo(choice) {
+            const fb = document.getElementById('semaforo-feedback');
+            document.querySelectorAll('.btn-sem').forEach(btn => btn.disabled = true);
+            fb.style.display = 'block';
+            
+            const item = semaforoData[currentSemaforo];
+            if(choice === item.answer) {
+                fb.style.background = '#15803d';
+                fb.innerText = "Correto! " + item.exp;
+            } else {
+                fb.style.background = '#b91c1c';
+                fb.innerText = "Classificação incorreta. Explicação: " + item.exp;
+            }
+
+            if(currentSemaforo < semaforoData.length - 1) {
+                document.getElementById('btn-next-semaforo').style.display = 'block';
+            } else {
+                setTimeout(() => {
+                    fb.innerHTML += `<br><br>🎉 <strong>Você concluiu todas as situações do Semáforo Jurídico!</strong>`;
+                }, 200);
+            }
+        }
+
+        function nextSemaforo() {
+            if(currentSemaforo < semaforoData.length - 1) {
+                currentSemaforo++;
+                loadSemaforo();
+            }
+        }
+
+        function resetSemaforo() {
+            currentSemaforo = 0;
+            loadSemaforo();
+        }
+        loadSemaforo();
+
+        // --- GLOSSÁRIO ---
+        const glossarioTerms = [
+            { term: "Capacidade Jurídica", def: "Aptidão que todas as pessoas possuem de adquirir direitos e contrair obrigações." },
+            { term: "Cidadania", def: "Conjunto de direitos e deveres civis, políticos e sociais de um indivíduo em um Estado." },
+            { term: "LGPD", def: "Lei Geral de Proteção de Dados (Lei nº 13.709/2018), que regula o tratamento de dados pessoais." },
+            { term: "CLT", def: "Consolidação das Leis do Trabalho, principal conjunto de normas trabalhistas do Brasil." }
+        ];
+
+        function renderGlossario(items) {
+            const list = document.getElementById('glossario-list');
+            list.innerHTML = '';
+            items.forEach(i => {
+                list.innerHTML += `<div class="card"><h3>${i.term}</h3><p>${i.def}</p></div>`;
+            });
+        }
+
+        function filterGlossario() {
+            const query = document.getElementById('searchGlossario').value.toLowerCase();
+            const filtered = glossarioTerms.filter(t => t.term.toLowerCase().includes(query) || t.def.toLowerCase().includes(query));
+            renderGlossario(filtered);
+        }
+        renderGlossario(glossarioTerms);
+
+        // --- CHATBOT ---
+        function sendChat() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim().toLowerCase();
+            if(!text) return;
+
+            const box = document.getElementById('chatBox');
+            box.innerHTML += `<div class="msg user">${input.value}</div>`;
+
+            let reply = "Desculpe, ainda estou aprendendo! Tente perguntar sobre 'capacidade jurídica', 'lgpd' ou 'consumidor'.";
+            if(text.includes("capacidade")) reply = "Capacidade jurídica é a aptidão legal que a pessoa tem de exercer direitos e assumir deveres.";
+            else if(text.includes("lgpd") || text.includes("dados")) reply = "A LGPD cuida da privacidade e do tratamento de seus dados pessoais na internet e fora dela.";
+            else if(text.includes("trabalho") || text.includes("clt")) reply = "O Direito do Trabalho regula direitos como férias, 13º salário, FGTS e limites da jornada de trabalho.";
+            else if(text.includes("consumidor") || text.includes("cdc")) reply = "O CDC garante direitos em compras, como garantia legal e devolução em 7 dias para compras digitais.";
+
+            setTimeout(() => {
+                box.innerHTML += `<div class="msg bot">${reply}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }, 400);
+
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
